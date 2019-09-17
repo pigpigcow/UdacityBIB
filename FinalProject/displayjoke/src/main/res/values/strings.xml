@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">DisplayJoke</string>
+    <string name="title_activity_display_joke">DisplayJoke</string>
+    <string name="load_error">Fail to load display joke lib</string>
+</resources>
