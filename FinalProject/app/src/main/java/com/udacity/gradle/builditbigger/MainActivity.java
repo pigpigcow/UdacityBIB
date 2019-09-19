@@ -1,5 +1,6 @@
 package com.udacity.gradle.builditbigger;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
@@ -8,12 +9,13 @@ import android.view.View;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.util.Pair;
 
 import com.example.displayjoke.DisplayJoke;
-import com.example.jokeprovider.JokeProvider;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements Displayable {
+    public static final String ERROR_MESSAGE = "Error finding display lib";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,16 +47,18 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void tellJoke(View view) {
-        JokeProvider jp = new JokeProvider();
+        EndpointService endpointService = new EndpointService(this, this);
+        endpointService.execute();
+    }
 
+    @Override
+    public void display(String msg) {
         Intent sendIntent = new Intent(this, DisplayJoke.class);
-        sendIntent.putExtra(Intent.EXTRA_TEXT, jp.getJoke());
+        sendIntent.putExtra(Intent.EXTRA_TEXT, msg);
         if (sendIntent.resolveActivity(getPackageManager()) != null) {
             startActivity(sendIntent);
         } else {
-            Toast.makeText(this, "Error finding display lib", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, ERROR_MESSAGE, Toast.LENGTH_SHORT).show();
         }
     }
-
-
 }

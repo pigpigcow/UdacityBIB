@@ -14,6 +14,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class DisplayJoke extends AppCompatActivity {
+    String msg;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -22,16 +23,6 @@ public class DisplayJoke extends AppCompatActivity {
         Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-
-        TextView mainTV = findViewById(R.id.main_tv);
         if (savedInstanceState == null) {
             Intent intent = getIntent();
             if (intent == null) {
@@ -39,18 +30,41 @@ public class DisplayJoke extends AppCompatActivity {
             }
 
             try {
-                String joke = intent.getStringExtra(Intent.EXTRA_TEXT);
-                mainTV.setText(joke);
+                msg = intent.getStringExtra(Intent.EXTRA_TEXT);
             } catch (NullPointerException e) {
                 e.printStackTrace();
                 closeOnError();
                 return;
             }
+        } else {
+            msg = savedInstanceState.getString(this.getClass().getSimpleName());
         }
+        setUI();
+    }
+
+    private void setUI() {
+        final String[] msgData = msg.split(",");
+        FloatingActionButton fab = findViewById(R.id.fab);
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, msgData[1], Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
+
+        TextView mainTV = findViewById(R.id.main_tv);
+        mainTV.setText(msgData[0]);
     }
 
     private void closeOnError() {
         Toast.makeText(this, R.string.load_error, Toast.LENGTH_SHORT).show();
         finish();
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        outState.putString(this.getClass().getSimpleName(), msg);
+        super.onSaveInstanceState(outState);
     }
 }
